@@ -22,6 +22,9 @@ public class ExpoLiveActivityModule: Module {
 
         @Field
         var dynamicIslandImageName: String?
+
+        @Field
+        var pausedAt: Double?
     }
     
     struct LiveActivityStyles: Record {
@@ -34,19 +37,8 @@ public class ExpoLiveActivityModule: Module {
         @Field
         var subtitleColor: String?
         
-        @Field
-        var progressViewTint: String?
         
-        @Field
-        var progressViewLabelColor: String?
         
-        @Field
-        var timerType: DynamicIslandTimerType?
-    }
-    
-    enum DynamicIslandTimerType: String, Enumerable {
-        case circular
-        case digital
     }
 
     public func definition() -> ModuleDefinition {
@@ -62,17 +54,15 @@ public class ExpoLiveActivityModule: Module {
                             name: "ExpoLiveActivity",
                             backgroundColor: styles?.backgroundColor,
                             titleColor: styles?.titleColor,
-                            subtitleColor: styles?.subtitleColor,
-                            progressViewTint: styles?.progressViewTint,
-                            progressViewLabelColor: styles?.progressViewLabelColor,
-                            timerType: styles?.timerType == .digital ? .digital : .circular
+                            subtitleColor: styles?.subtitleColor
                         )
                         let initialState = LiveActivityAttributes.ContentState(
                             title: state.title,
                             subtitle: state.subtitle,
                             date: date,
                             imageName: state.imageName,
-                            dynamicIslandImageName: state.dynamicIslandImageName)
+                            dynamicIslandImageName: state.dynamicIslandImageName,
+                            pausedAt: state.pausedAt != nil ? Date(timeIntervalSince1970: state.pausedAt! / 1000) : nil)
                         let activity = try Activity.request(
                             attributes: counterState,
                             content: .init(state: initialState, staleDate: nil), pushType: nil)
@@ -95,7 +85,8 @@ public class ExpoLiveActivityModule: Module {
                     subtitle: state.subtitle,
                     date: state.date != nil ? Date(timeIntervalSince1970: state.date! / 1000) : nil,
                     imageName: state.imageName,
-                    dynamicIslandImageName: state.dynamicIslandImageName)
+                    dynamicIslandImageName: state.dynamicIslandImageName,
+                    pausedAt: state.pausedAt != nil ? Date(timeIntervalSince1970: state.pausedAt! / 1000) : nil)
                 if let activity = Activity<LiveActivityAttributes>.activities.first(where: {
                     $0.id == activityId
                 }) {
@@ -121,7 +112,8 @@ public class ExpoLiveActivityModule: Module {
                     subtitle: state.subtitle,
                     date: state.date != nil ? Date(timeIntervalSince1970: state.date! / 1000) : nil,
                     imageName: state.imageName,
-                    dynamicIslandImageName: state.dynamicIslandImageName)
+                    dynamicIslandImageName: state.dynamicIslandImageName,
+                    pausedAt: state.pausedAt != nil ? Date(timeIntervalSince1970: state.pausedAt! / 1000) : nil)
                 if let activity = Activity<LiveActivityAttributes>.activities.first(where: {
                     $0.id == activityId
                 }) {

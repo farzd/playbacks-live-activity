@@ -59,6 +59,7 @@ The `state` object should include:
   date?: number; // Set as epoch time in milliseconds
   imageName?: string; // Matches the name of the image in 'assets/live-activity'
   dynamicIslandImageName?: string; // Matches the name of the image in 'assets/live-activity'
+  pausedAt?: number; // Set as epoch time in milliseconds to pause timer, null to resume
 };
 ```
 
@@ -69,9 +70,6 @@ The `styles` object should include:
    backgroundColor?: string;
    titleColor?: string;
    subtitleColor?: string;
-   progressViewTint?: string;
-   progressViewLabelColor?: string;
-   timerType?: DynamicIslandTimerType; // "circular" | "digital" - defines timer appereance on the dynamic island
 };
 ```
 
@@ -82,16 +80,14 @@ const state = {
   subtitle: "This is a subtitle",
   date: new Date(Date.now() + 60 * 1000 * 5).getTime(),
   imageName: "live_activity_image",
-  dynamicIslandImageName: "dynamic_island_image"
+  dynamicIslandImageName: "dynamic_island_image",
+  pausedAt: null // or Date.now() to pause the timer
 };
 
 const styles = {
   backgroundColor: "#FFFFFF",
   titleColor: "#000000",
   subtitleColor: "#333333",
-  progressViewTint: "#4CAF50",
-  progressViewLabelColor: "#FFFFFF",
-  timerType: "circular"
 };
 
 const activityId = LiveActivity.startActivity(state, styles);

@@ -16,20 +16,13 @@ struct LiveActivityAttributes: ActivityAttributes {
     var date: Date?
     var imageName: String?
     var dynamicIslandImageName: String?
+    var pausedAt: Date?
   }
 
   var name: String
   var backgroundColor: String?
   var titleColor: String?
   var subtitleColor: String?
-  var progressViewTint: String?
-  var progressViewLabelColor: String?
-  var timerType: DynamicIslandTimerType
-  
-  enum DynamicIslandTimerType: String, Codable {
-      case circular
-      case digital
-  }
 }
 
 struct LiveActivityLiveActivity: Widget {
@@ -41,22 +34,62 @@ struct LiveActivityLiveActivity: Widget {
 
     } dynamicIsland: { context in
       DynamicIsland {
-        DynamicIslandExpandedRegion(.leading, priority: 1) {
-          dynamicIslandExpandedLeading(title: context.state.title, subtitle: context.state.subtitle)
-            .dynamicIsland(verticalPlacement: .belowIfTooWide)
-            .padding(.leading, 5)
-        }
-        DynamicIslandExpandedRegion(.trailing) {
-          if let imageName = context.state.imageName {
-            dynamicIslandExpandedTrailing(imageName: imageName)
-              .padding(.trailing, 5)
+        DynamicIslandExpandedRegion(.center) {
+          HStack(alignment: .top, spacing: 12) {
+            // Column 1: Logo
+            if let imageName = context.state.imageName {  
+              VStack {
+                Spacer()
+                Image(imageName)
+                  .resizable()
+                  .scaledToFit()
+                  .frame(maxHeight: 40)
+                  .padding(.trailing, 4)
+                Spacer()
+              }
+            }
+            
+            // Column 2: Title and Timer
+            VStack(alignment: .leading, spacing: 2) {
+              Spacer()
+              Text(context.state.title)
+                .font(.system(size: 20))
+                .foregroundStyle(.white)
+                .fontWeight(.semibold)
+              
+              if let date = context.state.date {
+                let maxDate = min(Date.now.addingTimeInterval(3600), date.addingTimeInterval(3600)) // 60 minutes max
+                Text(timerInterval: date...maxDate, pauseTime: context.state.pausedAt, countsDown: false)
+                  .font(.system(size: 18, design: .monospaced))
+                  .fontWeight(.semibold)
+                  .foregroundStyle(.white)
+              }
+              Spacer()
+            }
+            
+            Spacer()
+            
+            // Column 3: Subtitle
+            VStack(alignment: .trailing, spacing: 2) {
+              Spacer()
+              if let subtitle = context.state.subtitle {
+                Button(action: {}) {
+                  Text(subtitle)
+                    .font(.system(size: 16))
+                    .fontWeight(.semibold)
+                    .foregroundStyle(.white)
+                    .padding(.vertical, 8)
+                    .padding(.horizontal, 16)
+                    .background(Color(hex: "fe5b25"))
+                    .cornerRadius(8)
+                }
+                .buttonStyle(.plain)
+              }
+              Spacer()
+            }
           }
-        }
-        DynamicIslandExpandedRegion(.bottom) {
-          if let date = context.state.date {
-            dynamicIslandExpandedBottom(endDate: date, progressViewTint: context.attributes.progressViewTint)
-              .padding(.horizontal, 5)
-          }
+          .padding(.horizontal, 16)
+          .padding(.vertical, 8)
         }
       } compactLeading: {
         if let dynamicIslandImageName = context.state.dynamicIslandImageName {
@@ -65,29 +98,25 @@ struct LiveActivityLiveActivity: Widget {
         }
       } compactTrailing: {
         if let date = context.state.date {
-          compactTimer(endDate: date, timerType: context.attributes.timerType, progressViewTint: context.attributes.progressViewTint)
+          compactTimer(endDate: date, pausedAt: context.state.pausedAt)
         }
       } minimal: {
         if let date = context.state.date {
-          compactTimer(endDate: date, timerType: context.attributes.timerType, progressViewTint: context.attributes.progressViewTint)
+          compactTimer(endDate: date, pausedAt: context.state.pausedAt)
         }
       }
     }
   }
   
   @ViewBuilder
-  private func compactTimer(endDate: Date, timerType: LiveActivityAttributes.DynamicIslandTimerType, progressViewTint: String?) -> some View {
-    if timerType == .digital {
-        Text(timerInterval: Date.now...max(Date.now, endDate))
-          .font(.system(size: 15))
-          .minimumScaleFactor(0.8)
-          .fontWeight(.semibold)
-          .frame(maxWidth: 60)
-          .multilineTextAlignment(.trailing)
-      } else {
-        circularTimer(endDate: endDate)
-          .tint(progressViewTint != nil ? Color(hex: progressViewTint!) : nil)
-      }
+  private func compactTimer(endDate: Date, pausedAt: Date?) -> some View {
+    let maxDate = min(Date.now.addingTimeInterval(3600), endDate.addingTimeInterval(3600)) // 60 minutes max
+    Text(timerInterval: endDate...maxDate, pauseTime: pausedAt, countsDown: false)
+      .font(.system(size: 15, design: .monospaced))
+      .minimumScaleFactor(0.8)
+      .fontWeight(.semibold)
+      .frame(maxWidth: 60)
+      .multilineTextAlignment(.trailing)
   }
 
   private func dynamicIslandExpandedLeading(title: String, subtitle: String?) -> some View {
@@ -116,10 +145,9 @@ struct LiveActivityLiveActivity: Widget {
     }
   }
   
-  private func dynamicIslandExpandedBottom(endDate: Date, progressViewTint: String?) -> some View {
+  private func dynamicIslandExpandedBottom(endDate: Date) -> some View {
     ProgressView(timerInterval: Date.now...max(Date.now, endDate))
       .foregroundStyle(.white)
-      .tint(progressViewTint != nil ? Color(hex: progressViewTint!) : nil)
       .padding(.top, 5)
   }
   

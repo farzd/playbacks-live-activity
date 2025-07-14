@@ -1,7 +1,6 @@
 import ExpoLiveActivityModule from "./ExpoLiveActivityModule";
 import { Platform } from "react-native";
 
-export type DynamicIslandTimerType = 'circular' | 'digital'
 
 export type LiveActivityState = {
   title: string;
@@ -9,15 +8,13 @@ export type LiveActivityState = {
   date?: number;
   imageName?: string;
   dynamicIslandImageName?: string;
+  pausedAt?: number;
 };
 
 export type LiveActivityStyles = {
   backgroundColor?: string;
   titleColor?: string;
   subtitleColor?: string;
-  progressViewTint?: string;
-  progressViewLabelColor?: string;
-  timerType: DynamicIslandTimerType;
 };
 
 /**

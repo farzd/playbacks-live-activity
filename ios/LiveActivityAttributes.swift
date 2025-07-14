@@ -15,18 +15,11 @@ struct LiveActivityAttributes: ActivityAttributes {
     var date: Date?
     var imageName: String?
     var dynamicIslandImageName: String?
+    var pausedAt: Date?
   }
 
   var name: String
   var backgroundColor: String?
   var titleColor: String?
   var subtitleColor: String?
-  var progressViewTint: String?
-  var progressViewLabelColor: String?
-  var timerType: DynamicIslandTimerType
-  
-  enum DynamicIslandTimerType: String, Codable {
-      case circular
-      case digital
-  }
 }
