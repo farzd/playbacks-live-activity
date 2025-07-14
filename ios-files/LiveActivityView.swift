@@ -39,8 +39,10 @@ struct LiveActivityView: View {
           .fontWeight(.semibold)
         
         if let date = contentState.date {
-          let maxDate = min(Date.now.addingTimeInterval(3600), date.addingTimeInterval(3600)) // 60 minutes max
-          Text(timerInterval: date...maxDate, pauseTime: contentState.pausedAt, countsDown: false)
+          let totalPaused = contentState.totalPausedDuration ?? 0
+          let adjustedStartDate = date.addingTimeInterval(totalPaused)
+          let maxDate = min(Date.now.addingTimeInterval(3600), adjustedStartDate.addingTimeInterval(3600))
+          Text(timerInterval: adjustedStartDate...maxDate, pauseTime: contentState.pausedAt, countsDown: false)
             .font(.system(size: 18, design: .monospaced))
             .fontWeight(.semibold)
             .foregroundStyle(.white)

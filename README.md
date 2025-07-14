@@ -60,6 +60,7 @@ The `state` object should include:
   imageName?: string; // Matches the name of the image in 'assets/live-activity'
   dynamicIslandImageName?: string; // Matches the name of the image in 'assets/live-activity'
   pausedAt?: number; // Set as epoch time in milliseconds to pause timer, null to resume
+  totalPausedDuration?: number; // Total time paused in milliseconds (cumulative across all pauses)
 };
 ```
 
@@ -81,7 +82,8 @@ const state = {
   date: new Date(Date.now() + 60 * 1000 * 5).getTime(),
   imageName: "live_activity_image",
   dynamicIslandImageName: "dynamic_island_image",
-  pausedAt: null // or Date.now() to pause the timer
+  pausedAt: null, // or Date.now() to pause the timer
+  totalPausedDuration: 0 // cumulative paused time in milliseconds
 };
 
 const styles = {

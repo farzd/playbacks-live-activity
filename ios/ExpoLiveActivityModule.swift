@@ -25,6 +25,9 @@ public class ExpoLiveActivityModule: Module {
 
         @Field
         var pausedAt: Double?
+
+        @Field
+        var totalPausedDuration: Double?
     }
     
     struct LiveActivityStyles: Record {
@@ -62,7 +65,8 @@ public class ExpoLiveActivityModule: Module {
                             date: date,
                             imageName: state.imageName,
                             dynamicIslandImageName: state.dynamicIslandImageName,
-                            pausedAt: state.pausedAt != nil ? Date(timeIntervalSince1970: state.pausedAt! / 1000) : nil)
+                            pausedAt: state.pausedAt != nil ? Date(timeIntervalSince1970: state.pausedAt! / 1000) : nil,
+                            totalPausedDuration: state.totalPausedDuration != nil ? state.totalPausedDuration! / 1000 : nil)
                         let activity = try Activity.request(
                             attributes: counterState,
                             content: .init(state: initialState, staleDate: nil), pushType: nil)
@@ -86,7 +90,8 @@ public class ExpoLiveActivityModule: Module {
                     date: state.date != nil ? Date(timeIntervalSince1970: state.date! / 1000) : nil,
                     imageName: state.imageName,
                     dynamicIslandImageName: state.dynamicIslandImageName,
-                    pausedAt: state.pausedAt != nil ? Date(timeIntervalSince1970: state.pausedAt! / 1000) : nil)
+                    pausedAt: state.pausedAt != nil ? Date(timeIntervalSince1970: state.pausedAt! / 1000) : nil,
+                    totalPausedDuration: state.totalPausedDuration != nil ? state.totalPausedDuration! / 1000 : nil)
                 if let activity = Activity<LiveActivityAttributes>.activities.first(where: {
                     $0.id == activityId
                 }) {
@@ -113,7 +118,8 @@ public class ExpoLiveActivityModule: Module {
                     date: state.date != nil ? Date(timeIntervalSince1970: state.date! / 1000) : nil,
                     imageName: state.imageName,
                     dynamicIslandImageName: state.dynamicIslandImageName,
-                    pausedAt: state.pausedAt != nil ? Date(timeIntervalSince1970: state.pausedAt! / 1000) : nil)
+                    pausedAt: state.pausedAt != nil ? Date(timeIntervalSince1970: state.pausedAt! / 1000) : nil,
+                    totalPausedDuration: state.totalPausedDuration != nil ? state.totalPausedDuration! / 1000 : nil)
                 if let activity = Activity<LiveActivityAttributes>.activities.first(where: {
                     $0.id == activityId
                 }) {

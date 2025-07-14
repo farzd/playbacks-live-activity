@@ -9,6 +9,7 @@ export type LiveActivityState = {
   imageName?: string;
   dynamicIslandImageName?: string;
   pausedAt?: number;
+  totalPausedDuration?: number;
 };
 
 export type LiveActivityStyles = {

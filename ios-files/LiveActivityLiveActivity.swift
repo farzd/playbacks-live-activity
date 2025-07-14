@@ -17,6 +17,7 @@ struct LiveActivityAttributes: ActivityAttributes {
     var imageName: String?
     var dynamicIslandImageName: String?
     var pausedAt: Date?
+    var totalPausedDuration: TimeInterval?
   }
 
   var name: String
@@ -58,8 +59,10 @@ struct LiveActivityLiveActivity: Widget {
                 .fontWeight(.semibold)
               
               if let date = context.state.date {
-                let maxDate = min(Date.now.addingTimeInterval(3600), date.addingTimeInterval(3600)) // 60 minutes max
-                Text(timerInterval: date...maxDate, pauseTime: context.state.pausedAt, countsDown: false)
+                let totalPaused = context.state.totalPausedDuration ?? 0
+                let adjustedStartDate = date.addingTimeInterval(totalPaused)
+                let maxDate = min(Date.now.addingTimeInterval(3600), adjustedStartDate.addingTimeInterval(3600))
+                Text(timerInterval: adjustedStartDate...maxDate, pauseTime: context.state.pausedAt, countsDown: false)
                   .font(.system(size: 18, design: .monospaced))
                   .fontWeight(.semibold)
                   .foregroundStyle(.white)
@@ -98,20 +101,22 @@ struct LiveActivityLiveActivity: Widget {
         }
       } compactTrailing: {
         if let date = context.state.date {
-          compactTimer(endDate: date, pausedAt: context.state.pausedAt)
+          compactTimer(endDate: date, pausedAt: context.state.pausedAt, totalPausedDuration: context.state.totalPausedDuration)
         }
       } minimal: {
         if let date = context.state.date {
-          compactTimer(endDate: date, pausedAt: context.state.pausedAt)
+          compactTimer(endDate: date, pausedAt: context.state.pausedAt, totalPausedDuration: context.state.totalPausedDuration)
         }
       }
     }
   }
   
   @ViewBuilder
-  private func compactTimer(endDate: Date, pausedAt: Date?) -> some View {
-    let maxDate = min(Date.now.addingTimeInterval(3600), endDate.addingTimeInterval(3600)) // 60 minutes max
-    Text(timerInterval: endDate...maxDate, pauseTime: pausedAt, countsDown: false)
+  private func compactTimer(endDate: Date, pausedAt: Date?, totalPausedDuration: TimeInterval?) -> some View {
+    let totalPaused = totalPausedDuration ?? 0
+    let adjustedStartDate = endDate.addingTimeInterval(totalPaused)
+    let maxDate = min(Date.now.addingTimeInterval(3600), adjustedStartDate.addingTimeInterval(3600))
+    Text(timerInterval: adjustedStartDate...maxDate, pauseTime: pausedAt, countsDown: false)
       .font(.system(size: 15, design: .monospaced))
       .minimumScaleFactor(0.8)
       .fontWeight(.semibold)
