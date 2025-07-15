@@ -12,15 +12,11 @@ public class ExpoLiveActivityModule: Module {
     // Static reference to the module instance for static method access
     static var shared: ExpoLiveActivityModule?
     
-    // Static method that can be called from the intent
-    static func handleCompleteIntent() {
+    // Instance method that handles the intent
+    func handleCompleteIntent() {
         print("handleCompleteIntent called")
-        if let instance = shared {
-            instance.sendEvent("onWidgetCompleteActivity", [:])
-            print("Event sent to JavaScript from static method")
-        } else {
-            print("Module instance not available")
-        }
+        self.sendEvent("onWidgetCompleteActivity", [:])
+        print("Event sent to JavaScript")
     }
     struct LiveActivityState: Record {
         @Field
@@ -67,8 +63,19 @@ public class ExpoLiveActivityModule: Module {
         
         Events("onWidgetCompleteActivity")
         
-        // Store reference to this instance
-        ExpoLiveActivityModule.shared = self
+        OnCreate {
+            // Store reference to this instance
+            ExpoLiveActivityModule.shared = self
+            
+            // Listen for intent notifications
+            NotificationCenter.default.addObserver(
+                forName: NSNotification.Name("CompleteIntentTriggered"),
+                object: nil,
+                queue: .main
+            ) { _ in
+                self.handleCompleteIntent()
+            }
+        }
 
         Function("startActivity") { (state: LiveActivityState, styles: LiveActivityStyles? ) -> String in
             let date = state.date != nil ? Date(timeIntervalSince1970: state.date! / 1000) : nil

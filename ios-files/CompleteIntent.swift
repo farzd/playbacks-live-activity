@@ -19,10 +19,10 @@ struct CompleteIntent: AppIntent, LiveActivityIntent {
     func perform() async throws -> some IntentResult {
         print("CompleteIntent perform() called")
         
-        // Call the static method directly in the module
-        ExpoLiveActivityModule.handleCompleteIntent()
+        // Send notification to the main app
+        NotificationCenter.default.post(name: NSNotification.Name("CompleteIntentTriggered"), object: nil)
         
-        print("Static method called")
+        print("Notification sent")
         return .result()
     }
 }
