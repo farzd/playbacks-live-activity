@@ -18,6 +18,7 @@ struct LiveActivityAttributes: ActivityAttributes {
     var dynamicIslandImageName: String?
     var pausedAt: Date?
     var totalPausedDuration: TimeInterval?
+    var limitText: String?
   }
 
   var name: String
@@ -36,7 +37,8 @@ struct LiveActivityLiveActivity: Widget {
     } dynamicIsland: { context in
       DynamicIsland {
         DynamicIslandExpandedRegion(.center) {
-          HStack(alignment: .top, spacing: 12) {
+          VStack(alignment: .leading, spacing: 1) {
+            HStack(alignment: .top, spacing: 12) {
             // Column 1: Logo
             if let imageName = context.state.imageName {  
               VStack {
@@ -90,9 +92,17 @@ struct LiveActivityLiveActivity: Widget {
               }
               Spacer()
             }
+            }
+            .padding(.horizontal, 16)
+            .padding(.vertical, 8)
+            
+            if let limitText = context.state.limitText {
+              Text(limitText)
+                .font(.system(size: 14))
+                .foregroundStyle(Color(hex: "757575"))
+                .padding(.leading, 50)
+            }
           }
-          .padding(.horizontal, 16)
-          .padding(.vertical, 8)
         }
       } compactLeading: {
         if let dynamicIslandImageName = context.state.dynamicIslandImageName {

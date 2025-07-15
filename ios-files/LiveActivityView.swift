@@ -16,6 +16,7 @@ struct LiveActivityView: View {
   
 
   var body: some View {
+VStack(alignment: .leading, spacing: 1) {
     HStack(alignment: .top, spacing: 12) {
       // Column 1: Logo
       if let imageName = contentState.imageName {  
@@ -44,8 +45,8 @@ struct LiveActivityView: View {
           let maxDate = min(Date.now.addingTimeInterval(3600), adjustedStartDate.addingTimeInterval(3600))
           Text(timerInterval: adjustedStartDate...maxDate, pauseTime: contentState.pausedAt, countsDown: false)
             .font(.system(size: 18, design: .monospaced))
+            .foregroundStyle(Color(hex: attributes.titleColor!))
             .fontWeight(.semibold)
-            .foregroundStyle(.white)
         }
            Spacer()
       }
@@ -70,6 +71,13 @@ struct LiveActivityView: View {
         }
           Spacer()
       }
+    }
+    if let limitText = contentState.limitText {
+      Text(limitText)
+        .font(.system(size: 14))
+        .foregroundStyle(Color(hex: "757575"))
+        .padding(.leading, 50)
+    }
     }
     .padding(.horizontal, 16)
     .padding(.vertical, 8)

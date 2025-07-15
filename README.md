@@ -61,6 +61,7 @@ The `state` object should include:
   dynamicIslandImageName?: string; // Matches the name of the image in 'assets/live-activity'
   pausedAt?: number; // Set as epoch time in milliseconds to pause timer, null to resume
   totalPausedDuration?: number; // Total time paused in milliseconds (cumulative across all pauses)
+  limitText?: string; // Optional warning text shown below timer (e.g., "60 min limit reached!")
 };
 ```
 
@@ -77,13 +78,14 @@ The `styles` object should include:
 ## Example Usage
 ```javascript
 const state = {
-  title: "Title",
+  title: "Recording",
   subtitle: "This is a subtitle",
   date: new Date(Date.now() + 60 * 1000 * 5).getTime(),
   imageName: "live_activity_image",
   dynamicIslandImageName: "dynamic_island_image",
   pausedAt: null, // or Date.now() to pause the timer
-  totalPausedDuration: 0 // cumulative paused time in milliseconds
+  totalPausedDuration: 0, // cumulative paused time in milliseconds
+  limitText: null // or "60 min limit reached! Start a new one" to show warning
 };
 
 const styles = {

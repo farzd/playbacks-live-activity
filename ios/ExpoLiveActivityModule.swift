@@ -28,6 +28,9 @@ public class ExpoLiveActivityModule: Module {
 
         @Field
         var totalPausedDuration: Double?
+
+        @Field
+        var limitText: String?
     }
     
     struct LiveActivityStyles: Record {
@@ -66,7 +69,8 @@ public class ExpoLiveActivityModule: Module {
                             imageName: state.imageName,
                             dynamicIslandImageName: state.dynamicIslandImageName,
                             pausedAt: state.pausedAt != nil ? Date(timeIntervalSince1970: state.pausedAt! / 1000) : nil,
-                            totalPausedDuration: state.totalPausedDuration != nil ? state.totalPausedDuration! / 1000 : nil)
+                            totalPausedDuration: state.totalPausedDuration != nil ? state.totalPausedDuration! / 1000 : nil,
+                            limitText: state.limitText)
                         let activity = try Activity.request(
                             attributes: counterState,
                             content: .init(state: initialState, staleDate: nil), pushType: nil)
@@ -91,7 +95,8 @@ public class ExpoLiveActivityModule: Module {
                     imageName: state.imageName,
                     dynamicIslandImageName: state.dynamicIslandImageName,
                     pausedAt: state.pausedAt != nil ? Date(timeIntervalSince1970: state.pausedAt! / 1000) : nil,
-                    totalPausedDuration: state.totalPausedDuration != nil ? state.totalPausedDuration! / 1000 : nil)
+                    totalPausedDuration: state.totalPausedDuration != nil ? state.totalPausedDuration! / 1000 : nil,
+                    limitText: state.limitText)
                 if let activity = Activity<LiveActivityAttributes>.activities.first(where: {
                     $0.id == activityId
                 }) {
@@ -119,7 +124,8 @@ public class ExpoLiveActivityModule: Module {
                     imageName: state.imageName,
                     dynamicIslandImageName: state.dynamicIslandImageName,
                     pausedAt: state.pausedAt != nil ? Date(timeIntervalSince1970: state.pausedAt! / 1000) : nil,
-                    totalPausedDuration: state.totalPausedDuration != nil ? state.totalPausedDuration! / 1000 : nil)
+                    totalPausedDuration: state.totalPausedDuration != nil ? state.totalPausedDuration! / 1000 : nil,
+                    limitText: state.limitText)
                 if let activity = Activity<LiveActivityAttributes>.activities.first(where: {
                     $0.id == activityId
                 }) {

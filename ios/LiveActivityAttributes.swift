@@ -17,6 +17,7 @@ struct LiveActivityAttributes: ActivityAttributes {
     var dynamicIslandImageName: String?
     var pausedAt: Date?
     var totalPausedDuration: TimeInterval?
+    var limitText: String?
   }
 
   var name: String
