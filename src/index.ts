@@ -70,12 +70,3 @@ export function addListener(eventName: string, listener: (...args: any[]) => voi
   return ExpoLiveActivityModule.addListener(eventName, listener);
 }
 
-/**
- * Test function to trigger the event manually
- */
-export function testEvent() {
-  if (Platform.OS !== "ios") {
-    throw new Error("testEvent is only available on iOS");
-  }
-  return ExpoLiveActivityModule.testEvent();
-}

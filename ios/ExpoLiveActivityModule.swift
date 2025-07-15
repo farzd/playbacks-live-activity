@@ -9,10 +9,18 @@ enum ModuleErrors: Error {
 
 public class ExpoLiveActivityModule: Module {
     
-    @objc func completeIntentHandler(_ notification: Notification) {
-        print("CompleteIntent notification received!")
-        sendEvent("onWidgetCompleteActivity", [:])
-        print("Event sent to JavaScript")
+    // Static reference to the module instance for static method access
+    static var shared: ExpoLiveActivityModule?
+    
+    // Static method that can be called from the intent
+    static func handleCompleteIntent() {
+        print("handleCompleteIntent called")
+        if let instance = shared {
+            instance.sendEvent("onWidgetCompleteActivity", [:])
+            print("Event sent to JavaScript from static method")
+        } else {
+            print("Module instance not available")
+        }
     }
     struct LiveActivityState: Record {
         @Field
@@ -59,23 +67,8 @@ public class ExpoLiveActivityModule: Module {
         
         Events("onWidgetCompleteActivity")
         
-        OnStartObserving {
-            print("Setting up notification observer for completeActivityFromWidget")
-            NotificationCenter.default.addObserver(
-                self,
-                selector: #selector(self.completeIntentHandler),
-                name: Notification.Name("completeActivityFromWidget"),
-                object: nil
-            )
-        }
-        
-        OnStopObserving {
-            NotificationCenter.default.removeObserver(
-                self,
-                name: Notification.Name("completeActivityFromWidget"),
-                object: nil
-            )
-        }
+        // Store reference to this instance
+        ExpoLiveActivityModule.shared = self
 
         Function("startActivity") { (state: LiveActivityState, styles: LiveActivityStyles? ) -> String in
             let date = state.date != nil ? Date(timeIntervalSince1970: state.date! / 1000) : nil
@@ -139,11 +132,6 @@ public class ExpoLiveActivityModule: Module {
             } else {
                 throw ModuleErrors.unsupported
             }
-        }
-
-        Function("testEvent") { () -> Void in
-            print("testEvent called, sending event to JavaScript")
-            sendEvent("onWidgetCompleteActivity", [:])
         }
 
         Function("updateActivity") { (activityId: String, state: LiveActivityState) -> Void in
