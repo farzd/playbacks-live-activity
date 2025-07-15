@@ -9,15 +9,6 @@ enum ModuleErrors: Error {
 
 public class ExpoLiveActivityModule: Module {
     
-    private func setupNotificationObservers() {
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(completeIntentHandler(_:)),
-            name: Notification.Name("completeActivityFromWidget"),
-            object: nil
-        )
-    }
-    
     @objc func completeIntentHandler(_ notification: Notification) {
         sendEvent("onWidgetCompleteActivity", [:])
     }
@@ -66,8 +57,21 @@ public class ExpoLiveActivityModule: Module {
         
         Events("onWidgetCompleteActivity")
         
-        onCreate {
-            setupNotificationObservers()
+        OnStartObserving {
+            NotificationCenter.default.addObserver(
+                self,
+                selector: #selector(self.completeIntentHandler),
+                name: Notification.Name("completeActivityFromWidget"),
+                object: nil
+            )
+        }
+        
+        OnStopObserving {
+            NotificationCenter.default.removeObserver(
+                self,
+                name: Notification.Name("completeActivityFromWidget"),
+                object: nil
+            )
         }
 
         Function("startActivity") { (state: LiveActivityState, styles: LiveActivityStyles? ) -> String in
