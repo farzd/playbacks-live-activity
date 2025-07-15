@@ -56,3 +56,16 @@ export function updateActivity(id: string, state: LiveActivityState): string {
   }
   return ExpoLiveActivityModule.updateActivity(id, state);
 }
+
+/**
+ * @param {string} eventName The name of the event to listen to.
+ * @param {Function} listener The function to call when the event is triggered.
+ * @returns {object} A subscription object with a remove method.
+ * @throws {Error} When function is called on platform different than iOS.
+ */
+export function addListener(eventName: string, listener: (...args: any[]) => void) {
+  if (Platform.OS !== "ios") {
+    throw new Error("addListener is only available on iOS");
+  }
+  return ExpoLiveActivityModule.addListener(eventName, listener);
+}
