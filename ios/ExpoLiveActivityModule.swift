@@ -10,7 +10,9 @@ enum ModuleErrors: Error {
 public class ExpoLiveActivityModule: Module {
     
     @objc func completeIntentHandler(_ notification: Notification) {
+        print("CompleteIntent notification received!")
         sendEvent("onWidgetCompleteActivity", [:])
+        print("Event sent to JavaScript")
     }
     struct LiveActivityState: Record {
         @Field
@@ -58,6 +60,7 @@ public class ExpoLiveActivityModule: Module {
         Events("onWidgetCompleteActivity")
         
         OnStartObserving {
+            print("Setting up notification observer for completeActivityFromWidget")
             NotificationCenter.default.addObserver(
                 self,
                 selector: #selector(self.completeIntentHandler),

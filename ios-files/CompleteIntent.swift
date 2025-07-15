@@ -10,7 +10,9 @@ struct CompleteIntent: AppIntent, LiveActivityIntent {
     init() {}
     
     func perform() async throws -> some IntentResult {
+        print("CompleteIntent perform() called")
         NotificationCenter.default.post(name: Notification.Name("completeActivityFromWidget"), object: nil)
+        print("Notification posted: completeActivityFromWidget")
         return .result()
     }
 }
