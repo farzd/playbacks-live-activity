@@ -9,15 +9,6 @@ enum ModuleErrors: Error {
 
 public class ExpoLiveActivityModule: Module {
     
-    override public init() {
-        super.init()
-        setupNotificationObservers()
-    }
-    
-    deinit {
-        NotificationCenter.default.removeObserver(self)
-    }
-    
     private func setupNotificationObservers() {
         NotificationCenter.default.addObserver(
             self,
@@ -74,6 +65,10 @@ public class ExpoLiveActivityModule: Module {
         Name("ExpoLiveActivity")
         
         Events("onWidgetCompleteActivity")
+        
+        onCreate {
+            setupNotificationObservers()
+        }
 
         Function("startActivity") { (state: LiveActivityState, styles: LiveActivityStyles? ) -> String in
             let date = state.date != nil ? Date(timeIntervalSince1970: state.date! / 1000) : nil
