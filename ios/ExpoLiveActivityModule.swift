@@ -141,6 +141,11 @@ public class ExpoLiveActivityModule: Module {
             }
         }
 
+        Function("testEvent") { () -> Void in
+            print("testEvent called, sending event to JavaScript")
+            sendEvent("onWidgetCompleteActivity", [:])
+        }
+
         Function("updateActivity") { (activityId: String, state: LiveActivityState) -> Void in
             if #available(iOS 16.2, *) {
                 print("Attempting to update")
