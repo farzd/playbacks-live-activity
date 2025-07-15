@@ -9,11 +9,12 @@ enum ModuleErrors: Error {
 
 public class ExpoLiveActivityModule: Module {
     
-    override public func viewWillAppear() {
+    override public init() {
+        super.init()
         setupNotificationObservers()
     }
     
-    override public func viewWillDisappear() {
+    deinit {
         NotificationCenter.default.removeObserver(self)
     }
     
