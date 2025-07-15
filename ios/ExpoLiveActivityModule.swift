@@ -9,15 +9,6 @@ enum ModuleErrors: Error {
 
 public class ExpoLiveActivityModule: Module {
     
-    // Static reference to the module instance for static method access
-    static var shared: ExpoLiveActivityModule?
-    
-    // Instance method that handles the intent
-    func handleCompleteIntent() {
-        print("handleCompleteIntent called")
-        self.sendEvent("onWidgetCompleteActivity", [:])
-        print("Event sent to JavaScript")
-    }
     struct LiveActivityState: Record {
         @Field
         var title: String
@@ -61,21 +52,7 @@ public class ExpoLiveActivityModule: Module {
     public func definition() -> ModuleDefinition {
         Name("ExpoLiveActivity")
         
-        Events("onWidgetCompleteActivity")
         
-        OnCreate {
-            // Store reference to this instance
-            ExpoLiveActivityModule.shared = self
-            
-            // Listen for intent notifications
-            NotificationCenter.default.addObserver(
-                forName: NSNotification.Name("CompleteIntentTriggered"),
-                object: nil,
-                queue: .main
-            ) { _ in
-                self.handleCompleteIntent()
-            }
-        }
 
         Function("startActivity") { (state: LiveActivityState, styles: LiveActivityStyles? ) -> String in
             let date = state.date != nil ? Date(timeIntervalSince1970: state.date! / 1000) : nil

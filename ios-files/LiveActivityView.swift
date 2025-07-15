@@ -57,8 +57,7 @@ VStack(alignment: .leading, spacing: 1) {
       VStack(alignment: .trailing, spacing: 2) {
           Spacer()
         if let subtitle = contentState.subtitle {
-          if #available(iOS 17.0, *) {
-            Button(intent: CompleteIntent()) {
+            Link(destination: URL(string: "playbacks://complete-activity")!) {
               Text(subtitle)
                  .font(.system(size: 16))
                  .fontWeight(.semibold)
@@ -69,7 +68,6 @@ VStack(alignment: .leading, spacing: 1) {
                 .cornerRadius(8)
             }
             .buttonStyle(.plain)
-          }
         }
           Spacer()
       }
