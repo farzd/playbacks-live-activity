@@ -57,17 +57,19 @@ VStack(alignment: .leading, spacing: 1) {
       VStack(alignment: .trailing, spacing: 2) {
           Spacer()
         if let subtitle = contentState.subtitle {
-          Button(intent: CompleteIntent()) {
-            Text(subtitle)
-               .font(.system(size: 16))
-               .fontWeight(.semibold)
-              .foregroundStyle(.white)
-              .padding(.vertical, 8)
-              .padding(.horizontal, 16)
-              .background(Color(hex: "fe5b25"))
-              .cornerRadius(8)
+          if #available(iOS 17.0, *) {
+            Button(intent: CompleteIntent()) {
+              Text(subtitle)
+                 .font(.system(size: 16))
+                 .fontWeight(.semibold)
+                .foregroundStyle(.white)
+                .padding(.vertical, 8)
+                .padding(.horizontal, 16)
+                .background(Color(hex: "fe5b25"))
+                .cornerRadius(8)
+            }
+            .buttonStyle(.plain)
           }
-          .buttonStyle(.plain)
         }
           Spacer()
       }
