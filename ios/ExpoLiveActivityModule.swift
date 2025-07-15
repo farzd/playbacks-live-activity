@@ -1,5 +1,6 @@
 import ActivityKit
 import ExpoModulesCore
+import Foundation
 
 enum ModuleErrors: Error {
     case unsupported
@@ -7,6 +8,27 @@ enum ModuleErrors: Error {
 }
 
 public class ExpoLiveActivityModule: Module {
+    
+    override public func viewWillAppear() {
+        setupNotificationObservers()
+    }
+    
+    override public func viewWillDisappear() {
+        NotificationCenter.default.removeObserver(self)
+    }
+    
+    private func setupNotificationObservers() {
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(completeIntentHandler(_:)),
+            name: Notification.Name("completeActivityFromWidget"),
+            object: nil
+        )
+    }
+    
+    @objc func completeIntentHandler(_ notification: Notification) {
+        sendEvent("onWidgetCompleteActivity", [:])
+    }
     struct LiveActivityState: Record {
         @Field
         var title: String
@@ -49,6 +71,8 @@ public class ExpoLiveActivityModule: Module {
 
     public func definition() -> ModuleDefinition {
         Name("ExpoLiveActivity")
+        
+        Events("onWidgetCompleteActivity")
 
         Function("startActivity") { (state: LiveActivityState, styles: LiveActivityStyles? ) -> String in
             let date = state.date != nil ? Date(timeIntervalSince1970: state.date! / 1000) : nil

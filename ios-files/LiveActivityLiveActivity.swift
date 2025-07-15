@@ -78,7 +78,7 @@ struct LiveActivityLiveActivity: Widget {
             VStack(alignment: .trailing, spacing: 2) {
               Spacer()
               if let subtitle = context.state.subtitle {
-                Button(action: {}) {
+                Button(intent: CompleteIntent()) {
                   Text(subtitle)
                     .font(.system(size: 16))
                     .fontWeight(.semibold)

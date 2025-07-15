@@ -57,7 +57,7 @@ VStack(alignment: .leading, spacing: 1) {
       VStack(alignment: .trailing, spacing: 2) {
           Spacer()
         if let subtitle = contentState.subtitle {
-          Button(action: {}) {
+          Button(intent: CompleteIntent()) {
             Text(subtitle)
                .font(.system(size: 16))
                .fontWeight(.semibold)
