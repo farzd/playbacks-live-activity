@@ -59,6 +59,13 @@ public class ExpoLiveActivityModule: Module {
             print("Starting activity")
             if #available(iOS 16.2, *) {
                 if ActivityAuthorizationInfo().areActivitiesEnabled {
+                    // End all existing activities before starting a new one
+                    for activity in Activity<LiveActivityAttributes>.activities {
+                        Task {
+                            await activity.end(nil, dismissalPolicy: .immediate)
+                        }
+                    }
+                    
                     do {
                         let counterState = LiveActivityAttributes(
                             name: "ExpoLiveActivity",
