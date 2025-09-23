@@ -1,6 +1,15 @@
 import ExpoLiveActivityModule from "./ExpoLiveActivityModule";
 import { Platform } from "react-native";
 
+const isMacCatalyst =
+  Platform.OS === "ios" && (Platform as any)?.constants?.interfaceIdiom === "mac";
+
+function assertSupported() {
+  if (Platform.OS !== "ios" || isMacCatalyst) {
+    throw new Error("Live Activities are not supported on this platform");
+  }
+}
+
 
 export type LiveActivityState = {
   title: string;
@@ -25,8 +34,9 @@ export type LiveActivityStyles = {
  * @throws {Error} When function is called on platform different than iOS.
  */
 export function startActivity(state: LiveActivityState, styles?: LiveActivityStyles): string {
-  if (Platform.OS !== "ios") {
-    throw new Error("startActivity is only available on iOS");
+  assertSupported();
+  if (!ExpoLiveActivityModule?.startActivity) {
+    throw new Error("Live Activities module not available on this device");
   }
   return ExpoLiveActivityModule.startActivity(state, styles);
 }
@@ -38,8 +48,9 @@ export function startActivity(state: LiveActivityState, styles?: LiveActivitySty
  * @throws {Error} When function is called on platform different than iOS.
  */
 export function stopActivity(id: string, state: LiveActivityState): string {
-  if (Platform.OS !== "ios") {
-    throw new Error("stopActivity is only available on iOS");
+  assertSupported();
+  if (!ExpoLiveActivityModule?.stopActivity) {
+    throw new Error("Live Activities module not available on this device");
   }
   return ExpoLiveActivityModule.stopActivity(id, state);
 }
@@ -51,8 +62,9 @@ export function stopActivity(id: string, state: LiveActivityState): string {
  * @throws {Error} When function is called on platform different than iOS.
  */
 export function updateActivity(id: string, state: LiveActivityState): string {
-  if (Platform.OS !== "ios") {
-    throw new Error("updateActivity is only available on iOS");
+  assertSupported();
+  if (!ExpoLiveActivityModule?.updateActivity) {
+    throw new Error("Live Activities module not available on this device");
   }
   return ExpoLiveActivityModule.updateActivity(id, state);
 }
@@ -64,9 +76,9 @@ export function updateActivity(id: string, state: LiveActivityState): string {
  * @throws {Error} When function is called on platform different than iOS.
  */
 export function addListener(eventName: string, listener: (...args: any[]) => void) {
-  if (Platform.OS !== "ios") {
-    throw new Error("addListener is only available on iOS");
+  assertSupported();
+  if (!ExpoLiveActivityModule?.addListener) {
+    throw new Error("Live Activities module not available on this device");
   }
   return ExpoLiveActivityModule.addListener(eventName, listener);
 }
-

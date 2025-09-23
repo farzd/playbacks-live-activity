@@ -6,6 +6,8 @@
 //
 
 import Foundation
+
+#if !targetEnvironment(macCatalyst)
 import ActivityKit
 
 struct LiveActivityAttributes: ActivityAttributes {
@@ -25,3 +27,4 @@ struct LiveActivityAttributes: ActivityAttributes {
   var titleColor: String?
   var subtitleColor: String?
 }
+#endif

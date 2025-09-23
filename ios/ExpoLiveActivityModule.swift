@@ -1,4 +1,3 @@
-import ActivityKit
 import ExpoModulesCore
 import Foundation
 
@@ -7,52 +6,65 @@ enum ModuleErrors: Error {
     case liveActivitiesNotEnabled
 }
 
+#if targetEnvironment(macCatalyst)
+// On Mac Catalyst, ActivityKit / Live Activities are not supported.
 public class ExpoLiveActivityModule: Module {
-    
     struct LiveActivityState: Record {
-        @Field
-        var title: String
-
-        @Field
-        var subtitle: String?
-
-        @Field
-        var date: Double?
-
-        @Field
-        var imageName: String?
-
-        @Field
-        var dynamicIslandImageName: String?
-
-        @Field
-        var pausedAt: Double?
-
-        @Field
-        var totalPausedDuration: Double?
-
-        @Field
-        var limitText: String?
+        @Field var title: String
+        @Field var subtitle: String?
+        @Field var date: Double?
+        @Field var imageName: String?
+        @Field var dynamicIslandImageName: String?
+        @Field var pausedAt: Double?
+        @Field var totalPausedDuration: Double?
+        @Field var limitText: String?
     }
-    
+
     struct LiveActivityStyles: Record {
-        @Field
-        var backgroundColor: String?
-        
-        @Field
-        var titleColor: String?
-        
-        @Field
-        var subtitleColor: String?
-        
-        
-        
+        @Field var backgroundColor: String?
+        @Field var titleColor: String?
+        @Field var subtitleColor: String?
     }
 
     public func definition() -> ModuleDefinition {
         Name("ExpoLiveActivity")
-        
-        
+
+        Function("startActivity") { (_: LiveActivityState, _: LiveActivityStyles?) -> String in
+            throw ModuleErrors.unsupported
+        }
+
+        Function("stopActivity") { (_: String, _: LiveActivityState) -> Void in
+            throw ModuleErrors.unsupported
+        }
+
+        Function("updateActivity") { (_: String, _: LiveActivityState) -> Void in
+            throw ModuleErrors.unsupported
+        }
+    }
+}
+#else
+import ActivityKit
+
+public class ExpoLiveActivityModule: Module {
+    struct LiveActivityState: Record {
+        @Field var title: String
+        @Field var subtitle: String?
+        @Field var date: Double?
+        @Field var imageName: String?
+        @Field var dynamicIslandImageName: String?
+        @Field var pausedAt: Double?
+        @Field var totalPausedDuration: Double?
+        @Field var limitText: String?
+    }
+
+    struct LiveActivityStyles: Record {
+        @Field var backgroundColor: String?
+        @Field var titleColor: String?
+        @Field var subtitleColor: String?
+    }
+
+    public func definition() -> ModuleDefinition {
+        Name("ExpoLiveActivity")
 
         Function("startActivity") { (state: LiveActivityState, styles: LiveActivityStyles? ) -> String in
             let date = state.date != nil ? Date(timeIntervalSince1970: state.date! / 1000) : nil
@@ -61,11 +73,9 @@ public class ExpoLiveActivityModule: Module {
                 if ActivityAuthorizationInfo().areActivitiesEnabled {
                     // End all existing activities before starting a new one
                     for activity in Activity<LiveActivityAttributes>.activities {
-                        Task {
-                            await activity.end(nil, dismissalPolicy: .immediate)
-                        }
+                        Task { await activity.end(nil, dismissalPolicy: .immediate) }
                     }
-                    
+
                     do {
                         let counterState = LiveActivityAttributes(
                             name: "ExpoLiveActivity",
@@ -81,12 +91,15 @@ public class ExpoLiveActivityModule: Module {
                             dynamicIslandImageName: state.dynamicIslandImageName,
                             pausedAt: state.pausedAt != nil ? Date(timeIntervalSince1970: state.pausedAt! / 1000) : nil,
                             totalPausedDuration: state.totalPausedDuration != nil ? state.totalPausedDuration! / 1000 : nil,
-                            limitText: state.limitText)
+                            limitText: state.limitText
+                        )
                         let activity = try Activity.request(
                             attributes: counterState,
-                            content: .init(state: initialState, staleDate: nil), pushType: nil)
+                            content: .init(state: initialState, staleDate: nil),
+                            pushType: nil
+                        )
                         return activity.id
-                    } catch (let error) {
+                    } catch {
                         print("Error with live activity: \(error)")
                     }
                 }
@@ -107,15 +120,15 @@ public class ExpoLiveActivityModule: Module {
                     dynamicIslandImageName: state.dynamicIslandImageName,
                     pausedAt: state.pausedAt != nil ? Date(timeIntervalSince1970: state.pausedAt! / 1000) : nil,
                     totalPausedDuration: state.totalPausedDuration != nil ? state.totalPausedDuration! / 1000 : nil,
-                    limitText: state.limitText)
-                if let activity = Activity<LiveActivityAttributes>.activities.first(where: {
-                    $0.id == activityId
-                }) {
+                    limitText: state.limitText
+                )
+                if let activity = Activity<LiveActivityAttributes>.activities.first(where: { $0.id == activityId }) {
                     Task {
                         print("Stopping activity with id: \(activityId)")
                         await activity.end(
                             ActivityContent(state: endState, staleDate: nil),
-                            dismissalPolicy: .immediate)
+                            dismissalPolicy: .immediate
+                        )
                     }
                 } else {
                     print("Didn't find activity with ID \(activityId)")
@@ -136,10 +149,9 @@ public class ExpoLiveActivityModule: Module {
                     dynamicIslandImageName: state.dynamicIslandImageName,
                     pausedAt: state.pausedAt != nil ? Date(timeIntervalSince1970: state.pausedAt! / 1000) : nil,
                     totalPausedDuration: state.totalPausedDuration != nil ? state.totalPausedDuration! / 1000 : nil,
-                    limitText: state.limitText)
-                if let activity = Activity<LiveActivityAttributes>.activities.first(where: {
-                    $0.id == activityId
-                }) {
+                    limitText: state.limitText
+                )
+                if let activity = Activity<LiveActivityAttributes>.activities.first(where: { $0.id == activityId }) {
                     Task {
                         print("Updating activity with id: \(activityId)")
                         await activity.update(ActivityContent(state: newState, staleDate: nil))
@@ -153,3 +165,4 @@ public class ExpoLiveActivityModule: Module {
         }
     }
 }
+#endif
