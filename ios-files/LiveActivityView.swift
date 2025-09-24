@@ -42,8 +42,9 @@ VStack(alignment: .leading, spacing: 1) {
         if let date = contentState.date {
           let totalPaused = contentState.totalPausedDuration ?? 0
           let adjustedStartDate = date.addingTimeInterval(totalPaused)
-          let maxDate = min(Date.now.addingTimeInterval(3600), adjustedStartDate.addingTimeInterval(3600))
-          Text(timerInterval: adjustedStartDate...maxDate, pauseTime: contentState.pausedAt, countsDown: false)
+          // Keep the timeline running until the activity explicitly pauses or stops
+          let endDate = Date.distantFuture
+          Text(timerInterval: adjustedStartDate...endDate, pauseTime: contentState.pausedAt, countsDown: false)
             .font(.system(size: 18, design: .monospaced))
             .foregroundStyle(Color(hex: attributes.titleColor!))
             .fontWeight(.semibold)

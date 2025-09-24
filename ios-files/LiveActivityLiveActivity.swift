@@ -63,8 +63,9 @@ struct LiveActivityLiveActivity: Widget {
               if let date = context.state.date {
                 let totalPaused = context.state.totalPausedDuration ?? 0
                 let adjustedStartDate = date.addingTimeInterval(totalPaused)
-                let maxDate = min(Date.now.addingTimeInterval(3600), adjustedStartDate.addingTimeInterval(3600))
-                Text(timerInterval: adjustedStartDate...maxDate, pauseTime: context.state.pausedAt, countsDown: false)
+                // Keep the timeline running until the activity explicitly pauses or stops
+                let endDate = Date.distantFuture
+                Text(timerInterval: adjustedStartDate...endDate, pauseTime: context.state.pausedAt, countsDown: false)
                   .font(.system(size: 18, design: .monospaced))
                   .fontWeight(.semibold)
                   .foregroundStyle(.white)
@@ -125,8 +126,9 @@ struct LiveActivityLiveActivity: Widget {
   private func compactTimer(endDate: Date, pausedAt: Date?, totalPausedDuration: TimeInterval?) -> some View {
     let totalPaused = totalPausedDuration ?? 0
     let adjustedStartDate = endDate.addingTimeInterval(totalPaused)
-    let maxDate = min(Date.now.addingTimeInterval(3600), adjustedStartDate.addingTimeInterval(3600))
-    Text(timerInterval: adjustedStartDate...maxDate, pauseTime: pausedAt, countsDown: false)
+    // Keep the compact timer ticking until the activity is paused or stopped
+    let timelineEndDate = Date.distantFuture
+    Text(timerInterval: adjustedStartDate...timelineEndDate, pauseTime: pausedAt, countsDown: false)
       .font(.system(size: 15, design: .monospaced))
       .minimumScaleFactor(0.8)
       .fontWeight(.semibold)
