@@ -95,7 +95,7 @@ public class ExpoLiveActivityModule: Module {
                         )
                         let activity = try Activity.request(
                             attributes: counterState,
-                            content: .init(state: initialState, staleDate: nil),
+                            content: .init(state: initialState, staleDate: Date.distantFuture),
                             pushType: nil
                         )
                         return activity.id
@@ -126,7 +126,7 @@ public class ExpoLiveActivityModule: Module {
                     Task {
                         print("Stopping activity with id: \(activityId)")
                         await activity.end(
-                            ActivityContent(state: endState, staleDate: nil),
+                            ActivityContent(state: endState, staleDate: Date.distantFuture),
                             dismissalPolicy: .immediate
                         )
                     }
@@ -154,7 +154,7 @@ public class ExpoLiveActivityModule: Module {
                 if let activity = Activity<LiveActivityAttributes>.activities.first(where: { $0.id == activityId }) {
                     Task {
                         print("Updating activity with id: \(activityId)")
-                        await activity.update(ActivityContent(state: newState, staleDate: nil))
+                        await activity.update(ActivityContent(state: newState, staleDate: Date.distantFuture))
                     }
                 } else {
                     print("Didn't find activity with ID \(activityId)")
