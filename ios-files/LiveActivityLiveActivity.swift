@@ -79,7 +79,7 @@ struct LiveActivityLiveActivity: Widget {
       VStack(alignment: .trailing, spacing: 2) {
           Spacer()
         if let subtitle = context.state.subtitle {
-            Link(destination: URL(string: "playbacks://")!) {
+            Link(destination: URL(string: "playbacks://live-activity/save")!) {
               Text(subtitle)
                  .font(.system(size: 16))
                  .fontWeight(.semibold)
